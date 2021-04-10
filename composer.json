@@ -64,6 +64,6 @@
   "support": {
     "issues": "https://github.com/php-kafka/php-simple-kafka-lib/issues",
     "doc": "https://php-kafka.github.io/php-simple-kafka-client.github.io",
-    "chat": ""
+    "chat": "https://gitter.im/php-kafka/php-simple-kafka-lib"
   }
 }
