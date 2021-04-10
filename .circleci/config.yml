@@ -1,0 +1,52 @@
+version: 2.1
+
+orbs:
+  ci-caching: jobcloud/ci-caching@1.0.2
+  ci-php: jobcloud/ci-php@0.32
+
+workflows:
+  test-php-simple-kafka-lib:
+    jobs:
+      - ci-caching/build-docker-images:
+          dockerComposeFile: "./docker/docker-compose.yml"
+      - ci-php/install-dependencies:
+          dockerComposeFile: "./docker/docker-compose.yml"
+          dependencyCheckSumFile: "./composer.json"
+          requires:
+            - ci-caching/build-docker-images
+      - coverage:
+          requires:
+            - ci-php/install-dependencies
+      - ci-php/code-style:
+          dockerComposeFile: "./docker/docker-compose.yml"
+          dependencyCheckSumFile: "./composer.json"
+          requires:
+            - ci-php/install-dependencies
+      - ci-php/static-analysis:
+          dockerComposeFile: "./docker/docker-compose.yml"
+          dependencyCheckSumFile: "./composer.json"
+          requires:
+            - ci-php/install-dependencies
+      - ci-php/infection-testing:
+          dockerComposeFile: "./docker/docker-compose.yml"
+          dependencyCheckSumFile: "./composer.json"
+          requires:
+            - ci-php/install-dependencies
+
+jobs:
+  coverage:
+    machine: true
+    steps:
+      - ci-php/coverage-command:
+          dockerComposeFile: "./docker/docker-compose.yml"
+          dependencyCheckSumFile: "./composer.json"
+      - run:
+          name:  Download cc-test-reporter
+          command: |
+            mkdir -p tmp/
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
+            chmod +x ./tmp/cc-test-reporter
+      - run:
+          name: Upload coverage results to Code Climate
+          command: |
+            ./tmp/cc-test-reporter after-build -p /var/www/html --coverage-input-type clover --exit-code $?
