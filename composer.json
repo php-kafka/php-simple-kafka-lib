@@ -6,6 +6,10 @@
   ],
   "authors": [
     {
+      "name": "Jobcloud AG",
+      "homepage": "https://careers.jobcloud.ch/en/our-team/?term=133"
+    },
+    {
       "name": "php-kafka",
       "homepage": "https://php-kafka.com"
     },
