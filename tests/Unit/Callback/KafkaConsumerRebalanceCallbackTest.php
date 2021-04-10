@@ -81,8 +81,7 @@ class KafkaConsumerRebalanceCallbackTest extends TestCase
 
         $consumerMock
             ->expects(self::any())
-            ->method('unsubscribe')
-            ->willReturn(null);
+            ->method('unsubscribe');
 
         $consumerMock
             ->expects(self::any())

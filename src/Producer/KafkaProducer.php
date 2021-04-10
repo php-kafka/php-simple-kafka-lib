@@ -162,8 +162,8 @@ final class KafkaProducer implements KafkaProducerInterface
         return $this->producer
             ->getMetadata(
                 false,
-                $topic,
-                $timeoutMs
+                $timeoutMs,
+                $topic
             )
             ->getTopics()
             ->current();

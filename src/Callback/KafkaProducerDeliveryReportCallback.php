@@ -28,7 +28,7 @@ final class KafkaProducerDeliveryReportCallback
         }
 
         throw new KafkaProducerException(
-            $message->errstr(),
+            $message->getErrorString(),
             $message->err
         );
     }

@@ -2,8 +2,8 @@
 
 namespace PhpKafka\Tests\Unit\Kafka\Consumer;
 
-use PhpKafka\Consumer\KafkaHighLevelConsumer;
-use PhpKafka\Consumer\KafkaHighLevelConsumerInterface;
+use PhpKafka\Consumer\KafkaConsumer;
+use PhpKafka\Consumer\KafkaConsumerInterface;
 use PhpKafka\Consumer\KafkaConsumerBuilder;
 use PhpKafka\Message\Decoder\DecoderInterface;
 use PhpKafka\Consumer\TopicSubscription;
@@ -205,32 +205,6 @@ final class KafkaConsumerBuilderTest extends TestCase
      * @return void
      * @throws \ReflectionException
      */
-    public function testSetConsumeCallback(): void
-    {
-        $callback = function () {
-            // Anonymous test method, no logic required
-        };
-
-        $clone = $this->kafkaConsumerBuilder->withConsumeCallback($callback);
-
-        $reflectionProperty = new \ReflectionProperty($clone, 'consumeCallback');
-        $reflectionProperty->setAccessible(true);
-
-        self::assertSame($callback, $reflectionProperty->getValue($clone));
-        self::assertNotSame($clone, $this->kafkaConsumerBuilder);
-
-        $consumer = $clone
-            ->withAdditionalBroker('localhost')
-            ->withSubscription('test')
-            ->build();
-        $conf = $consumer->getConfiguration();
-        self::assertArrayHasKey('consume_cb', $conf);
-    }
-
-    /**
-     * @return void
-     * @throws \ReflectionException
-     */
     public function testSetOffsetCommitCallback(): void
     {
         $callback = function () {
@@ -293,7 +267,7 @@ final class KafkaConsumerBuilderTest extends TestCase
             // Anonymous test method, no logic required
         };
 
-        /** @var $consumer KafkaHighLevelConsumer */
+        /** @var $consumer KafkaConsumer */
         $consumer = $this->kafkaConsumerBuilder
             ->withAdditionalBroker('localhost')
             ->withAdditionalSubscription('test-topic')
@@ -305,7 +279,7 @@ final class KafkaConsumerBuilderTest extends TestCase
             ->build();
 
         self::assertInstanceOf(KafkaConsumerInterface::class, $consumer);
-        self::assertInstanceOf(KafkaHighLevelConsumer::class, $consumer);
+        self::assertInstanceOf(KafkaConsumer::class, $consumer);
     }
 
     /**
@@ -317,7 +291,7 @@ final class KafkaConsumerBuilderTest extends TestCase
             // Anonymous test method, no logic required
         };
 
-        /** @var $consumer KafkaHighLevelConsumer */
+        /** @var $consumer KafkaConsumer */
         $consumer = $this->kafkaConsumerBuilder
             ->withAdditionalBroker('localhost')
             ->withAdditionalSubscription('test-topic')
@@ -329,7 +303,7 @@ final class KafkaConsumerBuilderTest extends TestCase
         $conf = $consumer->getConfiguration();
 
         self::assertInstanceOf(KafkaConsumerInterface::class, $consumer);
-        self::assertInstanceOf(KafkaHighLevelConsumerInterface::class, $consumer);
+        self::assertInstanceOf(KafkaConsumerInterface::class, $consumer);
         self::assertArrayHasKey('enable.auto.commit', $conf);
         self::assertEquals($conf['enable.auto.commit'], 'false');
     }

@@ -102,15 +102,15 @@ abstract class AbstractKafkaConsumer implements KafkaConsumerInterface
         }
 
         if (RD_KAFKA_RESP_ERR__PARTITION_EOF === $rdKafkaMessage->err) {
-            throw new KafkaConsumerEndOfPartitionException($rdKafkaMessage->errstr(), $rdKafkaMessage->err);
+            throw new KafkaConsumerEndOfPartitionException($rdKafkaMessage->getErrorString(), $rdKafkaMessage->err);
         } elseif (RD_KAFKA_RESP_ERR__TIMED_OUT === $rdKafkaMessage->err) {
-            throw new KafkaConsumerTimeoutException($rdKafkaMessage->errstr(), $rdKafkaMessage->err);
+            throw new KafkaConsumerTimeoutException($rdKafkaMessage->getErrorString(), $rdKafkaMessage->err);
         }
 
         $message = $this->getConsumerMessage($rdKafkaMessage);
 
         if (RD_KAFKA_RESP_ERR_NO_ERROR !== $rdKafkaMessage->err) {
-            throw new KafkaConsumerConsumeException($rdKafkaMessage->errstr(), $rdKafkaMessage->err, $message);
+            throw new KafkaConsumerConsumeException($rdKafkaMessage->getErrorString(), $rdKafkaMessage->err, $message);
         }
 
         if (true === $autoDecode) {
@@ -146,8 +146,8 @@ abstract class AbstractKafkaConsumer implements KafkaConsumerInterface
         return $this->consumer
             ->getMetadata(
                 false,
-                $topic,
-                $timeoutMs
+                $timeoutMs,
+                $topic
             )
             ->getTopics()
             ->current();

@@ -284,7 +284,7 @@ final class KafkaConsumerBuilder implements KafkaConsumerBuilderInterface
         //create SkcConsumer
         $rdKafkaConsumer = new SkcConsumer($kafkaConfig);
 
-        return new KafkaHighLevelConsumer($rdKafkaConsumer, $kafkaConfig, $this->decoder);
+        return new KafkaConsumer($rdKafkaConsumer, $kafkaConfig, $this->decoder);
     }
 
     /**
@@ -297,10 +297,6 @@ final class KafkaConsumerBuilder implements KafkaConsumerBuilderInterface
 
         if (null !== $this->rebalanceCallback) {
             $conf->setRebalanceCb($this->rebalanceCallback);
-        }
-
-        if (null !== $this->consumeCallback) {
-            $conf->setConsumeCb($this->consumeCallback);
         }
 
         if (null !== $this->logCallback) {
