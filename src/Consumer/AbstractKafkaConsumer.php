@@ -235,7 +235,7 @@ abstract class AbstractKafkaConsumer implements KafkaConsumerInterface
 
     /**
      * @param integer $timeoutMs
-     * @return null|SkcMessage
+     * @return SkcMessage
      */
-    abstract protected function kafkaConsume(int $timeoutMs): ?SkcMessage;
+    abstract protected function kafkaConsume(int $timeoutMs): SkcMessage;
 }

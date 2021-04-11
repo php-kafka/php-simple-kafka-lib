@@ -181,10 +181,10 @@ final class KafkaConsumer extends AbstractKafkaConsumer
 
     /**
      * @param integer $timeoutMs
-     * @return SkcMessage|null
+     * @return SkcMessage
      * @throws SkcException
      */
-    protected function kafkaConsume(int $timeoutMs): ?SkcMessage
+    protected function kafkaConsume(int $timeoutMs): SkcMessage
     {
         return $this->consumer->consume($timeoutMs);
     }
