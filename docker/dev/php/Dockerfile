@@ -26,7 +26,7 @@ RUN echo "$HOST_USER:x:$HOST_USER_ID:82:Linux User,,,:/home/$HOST_USER:" >> /etc
     echo "ALL ALL=NOPASSWD: ALL" >> /etc/sudoers && \
     addgroup $HOST_USER www-data
 
-# COMPOSER: install binary and prestissimo
+# COMPOSER: install binary
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
 
 # PHP: Install php extensions
