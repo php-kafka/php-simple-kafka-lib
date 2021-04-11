@@ -43,8 +43,7 @@ class KafkaConsumerRebalanceCallbackTest extends TestCase
         $consumer
             ->expects(self::once())
             ->method('assign')
-            ->with($partitions)
-            ->willReturn(null);
+            ->with($partitions);
 
 
         call_user_func(
@@ -62,8 +61,7 @@ class KafkaConsumerRebalanceCallbackTest extends TestCase
         $consumer
             ->expects(self::once())
             ->method('assign')
-            ->with(null)
-            ->willReturn(null);
+            ->with(null);
 
         call_user_func(new KafkaConsumerRebalanceCallback(), $consumer, RD_KAFKA_RESP_ERR__REVOKE_PARTITIONS);
     }

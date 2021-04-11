@@ -84,15 +84,6 @@ interface KafkaConsumerBuilderInterface
     public function withRebalanceCallback(callable $rebalanceCallback): self;
 
     /**
-     * Only applicable for the high level consumer
-     * Callback that is going to be called when you call consume
-     *
-     * @param callable $consumeCallback
-     * @return KafkaConsumerBuilderInterface
-     */
-    public function withConsumeCallback(callable $consumeCallback): self;
-
-    /**
      * Set callback that is being called on offset commits
      *
      * @param callable $offsetCommitCallback

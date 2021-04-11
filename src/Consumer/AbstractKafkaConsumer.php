@@ -94,12 +94,7 @@ abstract class AbstractKafkaConsumer implements KafkaConsumerInterface
             throw new KafkaConsumerConsumeException(KafkaConsumerConsumeException::NOT_SUBSCRIBED_EXCEPTION_MESSAGE);
         }
 
-        if (null === $rdKafkaMessage = $this->kafkaConsume($timeoutMs)) {
-            throw new KafkaConsumerEndOfPartitionException(
-                kafka_err2str(RD_KAFKA_RESP_ERR__PARTITION_EOF),
-                RD_KAFKA_RESP_ERR__PARTITION_EOF
-            );
-        }
+        $rdKafkaMessage = $this->kafkaConsume($timeoutMs);
 
         if (RD_KAFKA_RESP_ERR__PARTITION_EOF === $rdKafkaMessage->err) {
             throw new KafkaConsumerEndOfPartitionException($rdKafkaMessage->getErrorString(), $rdKafkaMessage->err);
@@ -211,9 +206,11 @@ abstract class AbstractKafkaConsumer implements KafkaConsumerInterface
 
         $partitions = [];
         $topicMetadata = $this->getMetadataForTopic($topic);
+        $metaPartitions = $topicMetadata->getPartitions();
 
-        foreach ($topicMetadata->getPartitions() as $partition) {
-            $partitions[] = $partition->getId();
+        while ($metaPartitions->valid()) {
+            $partitions[] = $metaPartitions->current()->getId();
+            $metaPartitions->next();
         }
 
         return $partitions;
@@ -238,7 +235,7 @@ abstract class AbstractKafkaConsumer implements KafkaConsumerInterface
 
     /**
      * @param integer $timeoutMs
-     * @return null|SkcMessage
+     * @return SkcMessage
      */
-    abstract protected function kafkaConsume(int $timeoutMs): ?SkcMessage;
+    abstract protected function kafkaConsume(int $timeoutMs): SkcMessage;
 }

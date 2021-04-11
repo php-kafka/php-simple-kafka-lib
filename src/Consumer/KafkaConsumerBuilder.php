@@ -24,7 +24,8 @@ final class KafkaConsumerBuilder implements KafkaConsumerBuilderInterface
     private $config = [
         'enable.auto.offset.store' => false,
         'enable.auto.commit' => false,
-        'auto.offset.reset' => 'earliest'
+        'enable.partition.eof' => true,
+        'auto.offset.reset' => 'earliest',
     ];
 
     /**
@@ -200,21 +201,6 @@ final class KafkaConsumerBuilder implements KafkaConsumerBuilderInterface
     }
 
     /**
-     * Only applicable for the high level consumer
-     * Callback that is going to be called when you call consume
-     *
-     * @param callable $consumeCallback
-     * @return KafkaConsumerBuilderInterface
-     */
-    public function withConsumeCallback(callable $consumeCallback): KafkaConsumerBuilderInterface
-    {
-        $that = clone $this;
-        $that->consumeCallback = $consumeCallback;
-
-        return $that;
-    }
-
-    /**
      * Callback for log related events
      *
      * @param callable $logCallback
@@ -300,7 +286,7 @@ final class KafkaConsumerBuilder implements KafkaConsumerBuilderInterface
         }
 
         if (null !== $this->logCallback) {
-            //$conf->setLogCb($this->logCallback);
+            $conf->setLogCb($this->logCallback);
         }
 
         if (null !== $this->offsetCommitCallback) {
