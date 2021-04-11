@@ -87,10 +87,23 @@ final class KafkaConsumerTest extends TestCase
      */
     public function testSubscribeSuccessWithAssignmentWithOffsetOnly(): void
     {
-        $partitions = [
-            $this->getMetadataPartitionMock(1),
-            $this->getMetadataPartitionMock(2)
-        ];
+        $partitionCollection = $this->createMock(SkcMetadataCollection::class);
+        $partitionCollection->expects(self::exactly(2))->method('next');
+        $partitionCollection
+            ->expects(self::exactly(3))
+            ->method('valid')
+            ->willReturnOnConsecutiveCalls(
+                true,
+                true,
+                false
+            );
+        $partitionCollection
+            ->expects(self::exactly(2))
+            ->method('current')
+            ->willReturnOnConsecutiveCalls(
+                $this->getMetadataPartitionMock(1),
+                $this->getMetadataPartitionMock(2)
+            );
 
         /** @var SkcConsumerTopic|MockObject $rdKafkaConsumerTopicMock */
         $rdKafkaConsumerTopicMock = $this->createMock(SkcConsumerTopic::class);
@@ -100,7 +113,7 @@ final class KafkaConsumerTest extends TestCase
         $rdKafkaMetadataTopicMock
             ->expects(self::once())
             ->method('getPartitions')
-            ->willReturn($partitions);
+            ->willReturn($partitionCollection);
 
         /** @var SkcMetadata|MockObject $rdKafkaMetadataMock */
         $rdKafkaMetadataMock = $this->createMock(SkcMetadata::class);
@@ -743,35 +756,6 @@ final class KafkaConsumerTest extends TestCase
         $lowOffset = $kafkaConsumer->getLastOffsetForTopicPartition('test-topic', 1, 1000);
 
         $this->assertEquals(5, $lowOffset);
-    }
-
-    /**
-     * @throws KafkaConsumerConsumeException
-     * @throws KafkaConsumerEndOfPartitionException
-     * @throws KafkaConsumerSubscriptionException
-     * @throws KafkaConsumerTimeoutException
-     * @return void
-     */
-    public function testConsumeThrowsEofExceptionIfQueueConsumeReturnsNull(): void
-    {
-        self::expectException(KafkaConsumerEndOfPartitionException::class);
-        self::expectExceptionCode(RD_KAFKA_RESP_ERR__PARTITION_EOF);
-        self::expectExceptionMessage(kafka_err2str(RD_KAFKA_RESP_ERR__PARTITION_EOF));
-
-        $rdKafkaConsumerMock = $this->createMock(SkcConsumer::class);
-        $kafkaConfigurationMock = $this->createMock(KafkaConfiguration::class);
-        $decoderMock = $this->getMockForAbstractClass(DecoderInterface::class);
-
-        $kafkaConsumer = new KafkaConsumer($rdKafkaConsumerMock, $kafkaConfigurationMock, $decoderMock);
-
-        $rdKafkaConsumerMock
-            ->expects(self::once())
-            ->method('consume')
-            ->with(10000)
-            ->willReturn(null);
-
-        $kafkaConsumer->subscribe();
-        $kafkaConsumer->consume();
     }
 
     /**

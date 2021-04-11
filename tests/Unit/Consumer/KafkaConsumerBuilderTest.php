@@ -8,7 +8,6 @@ use PhpKafka\Consumer\KafkaConsumerBuilder;
 use PhpKafka\Message\Decoder\DecoderInterface;
 use PhpKafka\Consumer\TopicSubscription;
 use PhpKafka\Exception\KafkaConsumerBuilderException;
-use PhpKafka\Consumer\KafkaConsumerInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -110,6 +109,7 @@ final class KafkaConsumerBuilderTest extends TestCase
                 'group.id' => 'test-group',
                 'enable.auto.offset.store' => true,
                 'enable.auto.commit' => false,
+                'enable.partition.eof' => true,
                 'auto.offset.reset' => 'earliest'
             ],
             $reflectionProperty->getValue($clone)
@@ -170,6 +170,7 @@ final class KafkaConsumerBuilderTest extends TestCase
         $consumer = $clone
             ->withAdditionalBroker('localhost')
             ->withSubscription('test')
+            ->withLogCallback($callback)
             ->build();
         $conf = $consumer->getConfiguration();
         self::assertArrayHasKey('error_cb', $conf);
@@ -196,6 +197,7 @@ final class KafkaConsumerBuilderTest extends TestCase
         $consumer = $clone
             ->withAdditionalBroker('localhost')
             ->withSubscription('test')
+            ->withLogCallback($callback)
             ->build();
         $conf = $consumer->getConfiguration();
         self::assertArrayHasKey('rebalance_cb', $conf);
@@ -222,6 +224,7 @@ final class KafkaConsumerBuilderTest extends TestCase
         $consumer = $clone
             ->withAdditionalBroker('localhost')
             ->withSubscription('test')
+            ->withLogCallback($callback)
             ->build();
         $conf = $consumer->getConfiguration();
         self::assertArrayHasKey('offset_commit_cb', $conf);
@@ -273,29 +276,6 @@ final class KafkaConsumerBuilderTest extends TestCase
             ->withAdditionalSubscription('test-topic')
             ->withRebalanceCallback($callback)
             ->withOffsetCommitCallback($callback)
-            ->withConsumeCallback($callback)
-            ->withErrorCallback($callback)
-            ->withLogCallback($callback)
-            ->build();
-
-        self::assertInstanceOf(KafkaConsumerInterface::class, $consumer);
-        self::assertInstanceOf(KafkaConsumer::class, $consumer);
-    }
-
-    /**
-     * @return void
-     */
-    public function testBuildHighLevelSuccess(): void
-    {
-        $callback = function ($kafka, $errId, $msg) {
-            // Anonymous test method, no logic required
-        };
-
-        /** @var $consumer KafkaConsumer */
-        $consumer = $this->kafkaConsumerBuilder
-            ->withAdditionalBroker('localhost')
-            ->withAdditionalSubscription('test-topic')
-            ->withRebalanceCallback($callback)
             ->withErrorCallback($callback)
             ->withLogCallback($callback)
             ->build();
@@ -303,8 +283,12 @@ final class KafkaConsumerBuilderTest extends TestCase
         $conf = $consumer->getConfiguration();
 
         self::assertInstanceOf(KafkaConsumerInterface::class, $consumer);
-        self::assertInstanceOf(KafkaConsumerInterface::class, $consumer);
+        self::assertInstanceOf(KafkaConsumer::class, $consumer);
         self::assertArrayHasKey('enable.auto.commit', $conf);
         self::assertEquals($conf['enable.auto.commit'], 'false');
+        self::assertArrayHasKey('rebalance_cb', $conf);
+        self::assertArrayHasKey('offset_commit_cb', $conf);
+        self::assertArrayHasKey('error_cb', $conf);
+        self::assertArrayHasKey('log_cb', $conf);
     }
 }

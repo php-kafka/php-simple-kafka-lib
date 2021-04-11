@@ -336,8 +336,7 @@ class KafkaProducerTest extends TestCase
         $this->rdKafkaProducerMock
             ->expects(self::once())
             ->method('initTransactions')
-            ->with(10000)
-            ->willReturn(RD_KAFKA_RESP_ERR_NO_ERROR);
+            ->with(10000);
         $this->rdKafkaProducerMock
             ->expects(self::once())
             ->method('beginTransaction');
@@ -353,8 +352,7 @@ class KafkaProducerTest extends TestCase
         $this->rdKafkaProducerMock
             ->expects(self::once())
             ->method('initTransactions')
-            ->with(10000)
-            ->willReturn(RD_KAFKA_RESP_ERR_NO_ERROR);
+            ->with(10000);
         $this->rdKafkaProducerMock
             ->expects(self::exactly(2))
             ->method('beginTransaction');
