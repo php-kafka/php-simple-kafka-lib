@@ -17,7 +17,7 @@ use SimpleKafkaClient\TopicPartition;
 use SimpleKafkaClient\TopicPartition as SkcTopicPartition;
 use SimpleKafkaClient\Consumer as SkcConsumer;
 
-final class KafkaConsumer extends AbstractKafkaConsumer implements KafkaConsumerInterface
+final class KafkaConsumer extends AbstractKafkaConsumer
 {
 
     /**

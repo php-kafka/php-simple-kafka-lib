@@ -6,8 +6,9 @@ namespace PhpKafka\Consumer;
 
 use PhpKafka\Message\KafkaConsumerMessageInterface;
 use SimpleKafkaClient\TopicPartition as SkcTopicPartition;
+use SimpleKafkaClient\Metadata\Topic as SkcMetadataTopic;
 
-interface KafkaConsumerInterface extends KafkaConsumerInterface
+interface KafkaConsumerInterface
 {
     /**
      * Assigns a consumer to the given TopicPartition(s)
