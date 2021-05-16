@@ -368,6 +368,9 @@ class KafkaProducerTest extends TestCase
     public function testBeginTransactionWithRetriableError(): void
     {
         self::expectException(KafkaProducerTransactionRetryException::class);
+        self::expectExceptionMessage(
+            sprintf(KafkaProducerTransactionRetryException::RETRIABLE_TRANSACTION_EXCEPTION_MESSAGE, '')
+        );
 
         $errorMock = $this->createMock(SkcErrorException::class);
         $errorMock->expects(self::once())->method('isRetriable')->willReturn(true);
@@ -389,6 +392,9 @@ class KafkaProducerTest extends TestCase
     public function testBeginTransactionWithAbortError(): void
     {
         self::expectException(KafkaProducerTransactionAbortException::class);
+        self::expectExceptionMessage(
+            sprintf(KafkaProducerTransactionAbortException::TRANSACTION_REQUIRES_ABORT_EXCEPTION_MESSAGE, '')
+        );
 
         $errorMock = $this->createMock(SkcErrorException::class);
         $errorMock->expects(self::once())->method('isRetriable')->willReturn(false);
@@ -411,6 +417,9 @@ class KafkaProducerTest extends TestCase
     public function testBeginTransactionWithFatalError(): void
     {
         self::expectException(KafkaProducerTransactionFatalException::class);
+        self::expectExceptionMessage(
+            sprintf(KafkaProducerTransactionFatalException::FATAL_TRANSACTION_EXCEPTION_MESSAGE, '')
+        );
 
         $errorMock = $this->createMock(SkcErrorException::class);
         $errorMock->expects(self::once())->method('isRetriable')->willReturn(false);
@@ -435,6 +444,9 @@ class KafkaProducerTest extends TestCase
         $firstExceptionCaught = false;
 
         self::expectException(KafkaProducerTransactionFatalException::class);
+        self::expectExceptionMessage(
+            sprintf(KafkaProducerTransactionFatalException::FATAL_TRANSACTION_EXCEPTION_MESSAGE, '')
+        );
 
         $errorMock = $this->createMock(SkcErrorException::class);
         $errorMock->expects(self::exactly(2))->method('isRetriable')->willReturn(false);
@@ -476,7 +488,9 @@ class KafkaProducerTest extends TestCase
     public function testAbortTransactionFailure(): void
     {
         self::expectException(KafkaProducerTransactionRetryException::class);
-        self::expectExceptionMessage(KafkaProducerTransactionRetryException::RETRIABLE_TRANSACTION_EXCEPTION_MESSAGE);
+        self::expectExceptionMessage(
+            sprintf(KafkaProducerTransactionRetryException::RETRIABLE_TRANSACTION_EXCEPTION_MESSAGE, 'test')
+        );
 
         $exception = new SkcErrorException('test', 1, 'some failure', false, true, false);
 
@@ -507,7 +521,9 @@ class KafkaProducerTest extends TestCase
     public function testCommitTransactionFailure(): void
     {
         self::expectException(KafkaProducerTransactionRetryException::class);
-        self::expectExceptionMessage(KafkaProducerTransactionRetryException::RETRIABLE_TRANSACTION_EXCEPTION_MESSAGE);
+        self::expectExceptionMessage(
+            sprintf(KafkaProducerTransactionRetryException::RETRIABLE_TRANSACTION_EXCEPTION_MESSAGE, 'test')
+        );
 
         $exception = new SkcErrorException('test', 1, 'some failure', false, true, false);
 
@@ -518,5 +534,26 @@ class KafkaProducerTest extends TestCase
             ->willThrowException($exception);
 
         $this->kafkaProducer->commitTransaction(10000);
+    }
+
+    /**
+     * @return void
+     */
+    public function testCommitTransactionFailurePreviousException(): void
+    {
+        $exception = new SkcErrorException('test', 1, 'some failure', false, true, false);
+
+        $this->rdKafkaProducerMock
+            ->expects(self::once())
+            ->method('commitTransaction')
+            ->with(10000)
+            ->willThrowException($exception);
+
+        try {
+            $this->kafkaProducer->commitTransaction(10000);
+        } catch (KafkaProducerTransactionRetryException $e) {
+            self::assertSame($exception, $e->getPrevious());
+        }
+
     }
 }
