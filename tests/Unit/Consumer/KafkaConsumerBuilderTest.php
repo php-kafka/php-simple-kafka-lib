@@ -207,6 +207,33 @@ final class KafkaConsumerBuilderTest extends TestCase
      * @return void
      * @throws \ReflectionException
      */
+    public function testSetOAuthBearerTokenRefreshCallback(): void
+    {
+        $callback = function () {
+            // Anonymous test method, no logic required
+        };
+
+        $clone = $this->kafkaConsumerBuilder->withOAuthBearerTokenRefreshCallback($callback);
+
+        $reflectionProperty = new \ReflectionProperty($clone, 'oauthBearerCallback');
+        $reflectionProperty->setAccessible(true);
+
+        self::assertSame($callback, $reflectionProperty->getValue($clone));
+        self::assertNotSame($clone, $this->kafkaConsumerBuilder);
+
+        $consumer = $clone
+            ->withAdditionalBroker('localhost')
+            ->withSubscription('test')
+            ->withOAuthBearerTokenRefreshCallback($callback)
+            ->build();
+        $conf = $consumer->getConfiguration();
+        self::assertArrayHasKey('oauthbearer_token_refresh_cb', $conf);
+    }
+
+    /**
+     * @return void
+     * @throws \ReflectionException
+     */
     public function testSetOffsetCommitCallback(): void
     {
         $callback = function () {
