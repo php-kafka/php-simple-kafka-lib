@@ -51,7 +51,7 @@ final class KafkaConsumerBuilder implements KafkaConsumerBuilderInterface
     /**
      * @var callable
      */
-    private $consumeCallback;
+    private $oauthBearerCallback;
 
     /**
      * @var callable
@@ -229,6 +229,20 @@ final class KafkaConsumerBuilder implements KafkaConsumerBuilderInterface
     }
 
     /**
+     * Set callback that is being called on offset commits
+     *
+     * @param callable $offsetCommitCallback
+     * @return KafkaConsumerBuilderInterface
+     */
+    public function withOAuthBearerTokenRefreshCallback(callable $oauthBearerCallback): KafkaConsumerBuilderInterface
+    {
+        $that = clone $this;
+        $that->oauthBearerCallback = $oauthBearerCallback;
+
+        return $that;
+    }
+
+    /**
      * Lets you set a custom decoder for the consumed message
      *
      * @param DecoderInterface $decoder
@@ -291,6 +305,10 @@ final class KafkaConsumerBuilder implements KafkaConsumerBuilderInterface
 
         if (null !== $this->offsetCommitCallback) {
             $conf->setOffsetCommitCb($this->offsetCommitCallback);
+        }
+
+        if (null !== $this->oauthBearerCallback) {
+            $conf->setOAuthBearerTokenRefreshCbLogCb($this->oauthBearerCallback);
         }
     }
 }

@@ -109,6 +109,24 @@ class KafkaProducerBuilderTest extends TestCase
     }
 
     /**
+     * @return void
+     * @throws \ReflectionException
+     */
+    public function testSetOAuthBearerTokenRefreshCallback(): void
+    {
+        $callback = function () {
+            // Anonymous test method, no logic required
+        };
+
+        $clone = $this->kafkaProducerBuilder->withOAuthBearerTokenRefreshCallback($callback);
+
+        $reflectionProperty = new \ReflectionProperty($clone, 'oauthBearerCallback');
+        $reflectionProperty->setAccessible(true);
+
+        self::assertSame($callback, $reflectionProperty->getValue($clone));
+    }
+
+    /**
      * @throws KafkaProducerException
      */
     public function testBuildNoBroker(): void

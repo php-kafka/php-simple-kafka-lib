@@ -40,6 +40,11 @@ final class KafkaProducerBuilder implements KafkaProducerBuilderInterface
     private $logCallback;
 
     /**
+     * @var callable
+     */
+    private $oauthBearerCallback;
+
+    /**
      * @var EncoderInterface
      */
     private $encoder;
@@ -132,6 +137,19 @@ final class KafkaProducerBuilder implements KafkaProducerBuilderInterface
     }
 
     /**
+     * Callback for OAuth Bearer Token refresh
+     *
+     * @param callable $oauthBearerCallback
+     * @return KafkaProducerBuilderInterface
+     */
+    public function withOAuthBearerTokenRefreshCallback(callable $oauthBearerCallback): KafkaProducerBuilderInterface
+    {
+        $this->oauthBearerCallback = $oauthBearerCallback;
+
+        return $this;
+    }
+
+    /**
      * Lets you set a custom encoder for produce message
      *
      * @param EncoderInterface $encoder
@@ -187,6 +205,10 @@ final class KafkaProducerBuilder implements KafkaProducerBuilderInterface
 
         if (null !== $this->logCallback) {
             $conf->setLogCb($this->logCallback);
+        }
+
+        if (null !== $this->oauthBearerCallback) {
+            $conf->setOAuthBearerTokenRefreshCbLogCb($this->oauthBearerCallback);
         }
     }
 }
