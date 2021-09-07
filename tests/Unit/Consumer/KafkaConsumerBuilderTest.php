@@ -227,7 +227,7 @@ final class KafkaConsumerBuilderTest extends TestCase
             ->withOAuthBearerTokenRefreshCallback($callback)
             ->build();
         $conf = $consumer->getConfiguration();
-        self::assertArrayHasKey('oauthbearer_refresh', $conf);
+        self::assertArrayHasKey('oauthbearer_token_refresh_cb', $conf);
     }
 
     /**
