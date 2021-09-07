@@ -231,7 +231,7 @@ final class KafkaConsumerBuilder implements KafkaConsumerBuilderInterface
     /**
      * Set callback that is being called on offset commits
      *
-     * @param callable $offsetCommitCallback
+     * @param callable $oauthBearerCallback
      * @return KafkaConsumerBuilderInterface
      */
     public function withOAuthBearerTokenRefreshCallback(callable $oauthBearerCallback): KafkaConsumerBuilderInterface

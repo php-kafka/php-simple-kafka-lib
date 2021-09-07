@@ -150,6 +150,7 @@ class KafkaProducerBuilderTest extends TestCase
             ->withDeliveryReportCallback($callback)
             ->withErrorCallback($callback)
             ->withLogCallback($callback)
+            ->withOAuthBearerTokenRefreshCallback($callback)
             ->build();
 
         self::assertInstanceOf(KafkaProducerInterface::class, $producer);

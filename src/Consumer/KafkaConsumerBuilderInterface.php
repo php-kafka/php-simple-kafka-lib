@@ -105,7 +105,15 @@ interface KafkaConsumerBuilderInterface
      * @param callable $logCallback
      * @return KafkaConsumerBuilderInterface
      */
-    public function withLogCallback(callable $logCallback): KafkaConsumerBuilderInterface;
+    public function withLogCallback(callable $logCallback): self;
+
+    /**
+     * Set callback that is being called on offset commits
+     *
+     * @param callable $oauthBearerCallback
+     * @return KafkaConsumerBuilderInterface
+     */
+    public function withOAuthBearerTokenRefreshCallback(callable $oauthBearerCallback): self;
 
     /**
      * Returns your consumer instance

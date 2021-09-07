@@ -51,6 +51,14 @@ interface KafkaProducerBuilderInterface
     public function withLogCallback(callable $logCallback): self;
 
     /**
+     * Callback for OAuth Bearer Token refresh
+     *
+     * @param callable $oauthBearerCallback
+     * @return KafkaProducerBuilderInterface
+     */
+    public function withOAuthBearerTokenRefreshCallback(callable $oauthBearerCallback): self;
+
+    /**
      * Lets you set a custom encoder for produce message
      *
      * @param EncoderInterface $encoder
