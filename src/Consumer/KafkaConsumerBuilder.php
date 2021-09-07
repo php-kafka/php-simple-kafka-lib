@@ -308,7 +308,7 @@ final class KafkaConsumerBuilder implements KafkaConsumerBuilderInterface
         }
 
         if (null !== $this->oauthBearerCallback) {
-            $conf->setOAuthBearerTokenRefreshCbLogCb($this->oauthBearerCallback);
+            $conf->setOAuthBearerTokenRefreshCb($this->oauthBearerCallback);
         }
     }
 }
